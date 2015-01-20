@@ -1,5 +1,6 @@
 package com.codepath.sampletodo;
 
+import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -24,15 +25,18 @@ public class MainActivity extends ActionBarActivity {
     ListView lvItems;
     Button btnAction;
     EditText eNewItem;
+    int editPosition;
+
+    private final int REQUEST_CODE = 14;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         lvItems = (ListView) findViewById(R.id.lvItems);
-        items = new ArrayList<String>();
+        items = new ArrayList<>();
         readItems();
-        itemsAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, items);
+        itemsAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, items);
         lvItems.setAdapter(itemsAdapter);
         setupListViewListener();
 
@@ -75,9 +79,22 @@ public class MainActivity extends ActionBarActivity {
                                             View view,
                                             int position,
                                             long id) {
+                        Intent intentEdit = new Intent(MainActivity.this, EditItemActivity.class);
+                        editPosition = position;
+                        intentEdit.putExtra("itemValue", items.get(editPosition));
+                        startActivityForResult(intentEdit, REQUEST_CODE);
                     }
                 }
         );
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == RESULT_OK && requestCode == REQUEST_CODE) {
+            String newItemValue = data.getExtras().getString("newItemValue");
+            items.set(editPosition, newItemValue);
+            resetActions();
+        }
     }
 
     private void resetActions(){
@@ -95,9 +112,9 @@ public class MainActivity extends ActionBarActivity {
         File filesDir = getFilesDir();
         File todoFile = new File(filesDir, "todo.txt");
         try {
-            items = new ArrayList<String>(FileUtils.readLines(todoFile));
+            items = new ArrayList<>(FileUtils.readLines(todoFile));
         } catch (IOException e) {
-            items = new ArrayList<String>();
+            items = new ArrayList<>();
         }
     }
 

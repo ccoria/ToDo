@@ -42,17 +42,6 @@ public class MainActivity extends ActionBarActivity {
         setAddMode();
     }
 
-    private void setEditMode(final int itemPosition) {
-        btnAction.setText("OK");
-        btnAction.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                changeItem(itemPosition);
-                setAddMode();
-            }
-        });
-    }
-
     private void setAddMode() {
         btnAction.setText("Add");
         btnAction.setOnClickListener(new View.OnClickListener() {
@@ -86,11 +75,6 @@ public class MainActivity extends ActionBarActivity {
                                             View view,
                                             int position,
                                             long id) {
-                        EditText eNewItem = (EditText) findViewById(R.id.etNewItem);
-                        eNewItem.setText(items.get(position));
-                        eNewItem.selectAll();
-                        eNewItem.setCursorVisible(true);
-                        setEditMode(position);
                     }
                 }
         );
@@ -99,12 +83,6 @@ public class MainActivity extends ActionBarActivity {
     private void resetActions(){
         itemsAdapter.notifyDataSetChanged();
         writeItems();
-    }
-
-    private void changeItem(int position) {
-        items.set(position, eNewItem.getText().toString());
-        resetActions();
-        eNewItem.setText("");
     }
 
     public void addItem() {
